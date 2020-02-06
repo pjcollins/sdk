@@ -911,4 +911,9 @@ Copyright (c) .NET Foundation. All rights reserved.
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.VisualBasic.targets" Condition="'$(Language)' == 'VB'" />
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.FSharp.targets" Condition="'$(Language)' == 'F#'" />
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.ILLink.targets" />
+
+  <!-- Import profile SDK if specified, should import props earlier though... -->
+  <Import Project="$(MSBuildThisFileDirectory)..\..\$(TargetFrameworkProfile).Sdk\Sdk\Sdk.props"   Condition=" '$(TargetFrameworkProfile)' != '' " />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\$(TargetFrameworkProfile).Sdk\Sdk\Sdk.targets" Condition=" '$(TargetFrameworkProfile)' != '' " />
+
 </Project>

@@ -75,6 +75,12 @@ Copyright (c) .NET Foundation. All rights reserved.
                         PrivateAssets="All"
                     Condition="('$(_TargetFrameworkVersionWithoutV)' != '') And ('$(_TargetFrameworkVersionWithoutV)' >= '3.0')"/>
 
+    <!-- Import Profile framework if specified -->
+    <FrameworkReference Include="$(TargetFrameworkProfile).App" IsImplicitlyDefined="true"
+                        Pack="false"
+                        PrivateAssets="All"
+                    Condition=" '$(TargetFrameworkProfile)' != '' "/>
+
   </ItemGroup>
 
 </Project>

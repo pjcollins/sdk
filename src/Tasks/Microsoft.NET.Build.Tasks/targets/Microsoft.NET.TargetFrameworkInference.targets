@@ -44,9 +44,18 @@ Copyright (c) .NET Foundation. All rights reserved.
    -->
 
   <!-- Split $(TargetFramework) (e.g. net45) into short identifier and short version (e.g. 'net' and '45'). -->
-  <PropertyGroup Condition="'$(TargetFramework)' != '' and !$(TargetFramework.Contains(',')) and !$(TargetFramework.Contains('+'))">
+  <PropertyGroup Condition="'$(TargetFramework)' != '' and !$(TargetFramework.Contains(',')) and !$(TargetFramework.Contains('+')) and !$(TargetFramework.Contains('-'))">
    <_ShortFrameworkIdentifier>$(TargetFramework.TrimEnd('.0123456789'))</_ShortFrameworkIdentifier>
    <_ShortFrameworkVersion>$(TargetFramework.Substring($(_ShortFrameworkIdentifier.Length)))</_ShortFrameworkVersion>
+  </PropertyGroup>
+
+  <!-- Split $(TargetFramework) (e.g. net5-android) into short identifier, short version, and profile (e.g. 'net', '5', 'android'). -->
+  <!-- TODO Update SupportedTargetFrameworks.props to contain NET5+$(Profile) variants, and check for valid profiles. For now don't validate profile. -->
+  <PropertyGroup Condition="'$(TargetFramework)' != '' and !$(TargetFramework.Contains(',')) and !$(TargetFramework.Contains('+')) and $(TargetFramework.Contains('-'))">
+    <_ShortFrameworkProfile>$(TargetFramework.Substring($([MSBuild]::Add($(TargetFramework.IndexOf('-')), 1))))</_ShortFrameworkProfile>
+    <_TargetFrameworkNoProfile>$(TargetFramework.Substring(0, $(TargetFramework.IndexOf('-'))))</_TargetFrameworkNoProfile>
+    <_ShortFrameworkIdentifier>$(_TargetFrameworkNoProfile.TrimEnd('.0123456789'))</_ShortFrameworkIdentifier>
+    <_ShortFrameworkVersion>$(_TargetFrameworkNoProfile.Substring($(_ShortFrameworkIdentifier.Length)))</_ShortFrameworkVersion>
   </PropertyGroup>
 
   <!-- Map short name to long name. See earlier comment for example of how to work with identifiers that are not recognized here. -->
@@ -66,6 +75,12 @@ Copyright (c) .NET Foundation. All rights reserved.
     <TargetFrameworkVersion Condition="$(_ShortFrameworkVersion.Length) == 1">v$(_ShortFrameworkVersion[0]).0</TargetFrameworkVersion>
     <TargetFrameworkVersion Condition="$(_ShortFrameworkVersion.Length) == 2">v$(_ShortFrameworkVersion[0]).$(_ShortFrameworkVersion[1])</TargetFrameworkVersion>
     <TargetFrameworkVersion Condition="$(_ShortFrameworkVersion.Length) == 3">v$(_ShortFrameworkVersion[0]).$(_ShortFrameworkVersion[1]).$(_ShortFrameworkVersion[2])</TargetFrameworkVersion>
+  </PropertyGroup>
+
+    <!-- Map short profile name to long name-->
+  <PropertyGroup Condition="'$(TargetFrameworkProfile)' == ''">
+    <TargetFrameworkProfile Condition="'$(_ShortFrameworkProfile)' == 'android'">Xamarin.Android</TargetFrameworkProfile>
+    <TargetFrameworkProfile Condition="'$(_ShortFrameworkProfile)' == 'ios'">Xamarin.iOS</TargetFrameworkProfile>
   </PropertyGroup>
 
   <!-- 
